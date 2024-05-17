@@ -1,0 +1,20 @@
+{
+    "id": "The ID",
+    "name": "The User",
+    "designation": "CEO",
+    "address":
+    [
+        {
+            "doorNumber": 1,
+            "street": "The office street",
+            "city": "The office city",
+            "country": "The office country"
+        },
+        {
+            "doorNumber": 1,
+            "street": "The home street",
+            "city": "The home city",
+            "country": "The home country"
+        }
+    ]
+}
