@@ -1,19 +1,12 @@
-# aws-apps-go
+# awsGoDevKit
 
 This Git repository contains various AWS applications showcasing different implementation scenarios, such as utilizing AWS Lambda functions, SNS topics, and CloudWatch cron triggers.
 You can find explaination of these applications in respective articles here: https://solutiontoolkit.com
 
-## Overview
-
-The repository provides examples of serverless applications built using AWS Lambda functions, demonstrating how to leverage AWS services to create efficient and scalable solutions. Each application focuses on a specific use case and utilizes various AWS components to achieve its objectives.
 
 ## Applications
 
-1. **aws-lambda-cron-go**
-   - This application showcases how to create a scheduled event using CloudWatch cron expressions. It demonstrates how Lambda functions can be triggered at specific intervals using CloudWatch Events.
-More details can be found here: https://solutiontoolkit.com/2023/02/how-to-invoke-aws-lambda-by-a-scheduled-event/ 
-
-2. **aws-lambda-external-sns-topic-go**
+- **aws-lambda-external-sns-topic-go**
    - This application illustrates the cross-account integration of different AWS lambda functions through SNS (Simple Notification Service) topics.
      https://solutiontoolkit.com/2023/07/cross-account-aws-lambda-functions-integration-with-sns/
 
