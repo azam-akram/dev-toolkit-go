@@ -3,13 +3,6 @@
 This Git repository contains various AWS applications showcasing different implementation scenarios, such as utilizing AWS Lambda functions, SNS topics, and CloudWatch cron triggers.
 You can find explaination of these applications in respective articles here: https://solutiontoolkit.com
 
-
-## Applications
-
-- **aws-lambda-external-sns-topic-go**
-   - This application illustrates the cross-account integration of different AWS lambda functions through SNS (Simple Notification Service) topics.
-     https://solutiontoolkit.com/2023/07/cross-account-aws-lambda-functions-integration-with-sns/
-
 ## Getting Started
 
 To explore each application and its implementation, navigate to the corresponding folder in the repository. Each application contains its source code, CloudFormation templates, and detailed instructions on how to deploy and run the application.
