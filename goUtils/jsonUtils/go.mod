@@ -1,4 +1,4 @@
-module github/GoDevKit/goUtils/jsonUtils
+module github/GoDevToolKit/goUtils/jsonUtils
 
 go 1.22.2
 

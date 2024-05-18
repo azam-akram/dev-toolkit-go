@@ -1,6 +1,6 @@
 package main
 
-import "github/GoDevKit/goUtils/jsonUtils/json_utils"
+import "github/GoDevToolKit/goUtils/jsonUtils/json_utils"
 
 var empStr = `{
     "id": "The ID",

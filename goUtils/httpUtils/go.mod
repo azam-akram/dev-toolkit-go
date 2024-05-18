@@ -1,4 +1,4 @@
-module github/GoDevKit/goUtils/httpUtils
+module github/GoDevToolKit/goUtils/httpUtils
 
 go 1.22.2
 
