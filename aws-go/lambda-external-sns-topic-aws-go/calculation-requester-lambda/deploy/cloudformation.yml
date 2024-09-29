@@ -48,7 +48,7 @@ Resources:
             Ref: pSnsTopicArn
       Architectures:
       - x86_64
-      Runtime: go1.x
+      Runtime: provided.al2023
       Handler: main
       Code:
         S3Bucket: !Ref pLambdaCodeBucket

@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: A CloudFormation template to deploy three Lambda functions and a Step Functions state machine.
+Parameters:
+  pLambdaCodeBucket:
+    Type: String
+    Description: S3 bucket containing the Lambda function code.
+  pInputValidationCodeS3KeyPath:
+    Type: String
+    Description: S3 key path for Input Validation Lambda function code.
+  pDataProcessingCodeS3KeyPath:
+    Type: String
+    Description: S3 key path for Data Processing Lambda function code.
+  pResultStorageCodeS3KeyPath:
+    Type: String
+    Description: S3 key path for Result Storage Lambda function code.
+
+Resources:
+  # IAM Role for Lambda
+  lfnLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: lambdaCloudWatchPolicy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  # Input Validation Lambda Function
+  InputValidationFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: lfnLambdaRole
+    Properties:
+      FunctionName: InputValidationFunction
+      Description: This is the input validation Lambda function
+      Architectures:
+        - x86_64
+      Runtime: provided.al2023
+      Handler: main
+      Code:
+        S3Bucket: !Ref pLambdaCodeBucket
+        S3Key: !Ref pInputValidationCodeS3KeyPath
+      Role: !GetAtt lfnLambdaRole.Arn
+      Timeout: '120'
+
+  # Data Processing Lambda Function
+  DataProcessingFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: lfnLambdaRole
+    Properties:
+      FunctionName: DataProcessingFunction
+      Description: This is the data processing Lambda function
+      Architectures:
+        - x86_64
+      Runtime: provided.al2023
+      Handler: main
+      Code:
+        S3Bucket: !Ref pLambdaCodeBucket
+        S3Key: !Ref pDataProcessingCodeS3KeyPath
+      Role: !GetAtt lfnLambdaRole.Arn
+      Timeout: '120'
+
+  # Result Storage Lambda Function
+  ResultStorageFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: lfnLambdaRole
+    Properties:
+      FunctionName: ResultStorageFunction
+      Description: This is the result storage Lambda function
+      Architectures:
+        - x86_64
+      Runtime: provided.al2023
+      Handler: main
+      Code:
+        S3Bucket: !Ref pLambdaCodeBucket
+        S3Key: !Ref pResultStorageCodeS3KeyPath
+      Role: !GetAtt lfnLambdaRole.Arn
+      Timeout: '120'
+
+  # Step Functions Role
+  StepFunctionsExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: StepFunctionsPolicy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt InputValidationFunction.Arn
+                  - !GetAtt DataProcessingFunction.Arn
+                  - !GetAtt ResultStorageFunction.Arn
+
+  # AWS Step Functions State Machine
+  MyStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString:
+        Fn::Sub: |
+          {
+            "Comment": "A workflow to validate, process, and store data with 5-second delays.",
+            "StartAt": "InputValidation",
+            "States": {
+              "InputValidation": {
+                "Type": "Task",
+                "Resource": "${InputValidationFunction.Arn}",
+                "Next": "WaitBeforeCheckValidation"
+              },
+              "WaitBeforeCheckValidation": {
+                "Type": "Wait",
+                "Seconds": 5,
+                "Next": "CheckValidation"
+              },
+              "CheckValidation": {
+                "Type": "Choice",
+                "Choices": [
+                  {
+                    "Variable": "$.is_valid",
+                    "BooleanEquals": true,
+                    "Next": "DataProcessing"
+                  }
+                ],
+                "Default": "ValidationFailed"
+              },
+              "DataProcessing": {
+                "Type": "Task",
+                "Resource": "${DataProcessingFunction.Arn}",
+                "Next": "StoreResult"
+              },
+              "StoreResult": {
+                "Type": "Task",
+                "Resource": "${ResultStorageFunction.Arn}",
+                "End": true
+              },
+              "ValidationFailed": {
+                "Type": "Fail",
+                "Cause": "Input validation failed."
+              }
+            }
+          }
+      RoleArn: !GetAtt StepFunctionsExecutionRole.Arn
