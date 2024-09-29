@@ -3,6 +3,7 @@ module github/dev-toolkit-go/utils-go/json-utils-go
 go 1.22.2
 
 require (
+	github.com/azam-akram/json-helper-go v1.0.0
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
 )

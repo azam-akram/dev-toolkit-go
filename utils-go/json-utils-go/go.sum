@@ -1,3 +1,5 @@
+github.com/azam-akram/json-helper-go v1.0.0 h1:bBoy5/D3vKqY4BFPeTdN3T7s5QitOhrqTNe8mRsox0Y=
+github.com/azam-akram/json-helper-go v1.0.0/go.mod h1:TjcvEOMfEPWHpL+iQLBKzfKpXEena1F0YUXffv4ZKkc=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

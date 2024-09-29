@@ -1,3 +1,6 @@
+# github.com/azam-akram/json-helper-go v1.0.0
+## explicit; go 1.22.2
+github.com/azam-akram/json-helper-go
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew

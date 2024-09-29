@@ -1,6 +1,11 @@
 package main
 
-import "github/dev-toolkit-go/utils-go/json-utils-go/handler"
+import (
+	"fmt"
+	//"github/dev-toolkit-go/utils-go/json-utils-go/handler"
+
+	jsonhelper "github.com/azam-akram/json-helper-go"
+)
 
 var empStr = `{
     "id": "The ID",
@@ -24,6 +29,13 @@ var empStr = `{
 }`
 
 func main() {
-	jsonHandler := handler.NewJsonHandler()
-	jsonHandler.DisplayAllJsonHandlers(empStr)
+	//jsonHandler := handler.NewJsonHandler()
+	//jsonHandler.DisplayAllJsonHandlers(empStr)
+
+	//fmt.Print("--------------------")
+
+	jsonHelper := jsonhelper.NewJsonHelper()
+	jsonHelper.StringToMap(empStr)
+
+	fmt.Print(empStr)
 }
