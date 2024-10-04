@@ -115,47 +115,34 @@ Resources:
   MyStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
-      DefinitionString:
-        Fn::Sub: |
-          {
-            "Comment": "A workflow to validate, process, and store data with 5-second delays.",
-            "StartAt": "InputValidation",
-            "States": {
-              "InputValidation": {
-                "Type": "Task",
-                "Resource": "${InputValidationFunction.Arn}",
-                "Next": "WaitBeforeCheckValidation"
-              },
-              "WaitBeforeCheckValidation": {
-                "Type": "Wait",
-                "Seconds": 5,
-                "Next": "CheckValidation"
-              },
-              "CheckValidation": {
-                "Type": "Choice",
-                "Choices": [
-                  {
-                    "Variable": "$.is_valid",
-                    "BooleanEquals": true,
-                    "Next": "DataProcessing"
-                  }
-                ],
-                "Default": "ValidationFailed"
-              },
-              "DataProcessing": {
-                "Type": "Task",
-                "Resource": "${DataProcessingFunction.Arn}",
-                "Next": "StoreResult"
-              },
-              "StoreResult": {
-                "Type": "Task",
-                "Resource": "${ResultStorageFunction.Arn}",
-                "End": true
-              },
-              "ValidationFailed": {
-                "Type": "Fail",
-                "Cause": "Input validation failed."
-              }
-            }
-          }
+      Definition:
+        Comment: "A workflow to validate, process, and store data with 5-second delays."
+        StartAt: "InputValidation"
+        States:
+          InputValidation:
+            Type: Task
+            Resource: !GetAtt InputValidationFunction.Arn
+            Next: WaitBeforeCheckValidation
+          WaitBeforeCheckValidation:
+            Type: Wait
+            Seconds: 5
+            Next: CheckValidation
+          CheckValidation:
+            Type: Choice
+            Choices:
+              - Variable: "$.is_valid"
+                BooleanEquals: true
+                Next: DataProcessing
+            Default: ValidationFailed
+          DataProcessing:
+            Type: Task
+            Resource: !GetAtt DataProcessingFunction.Arn
+            Next: StoreResult
+          StoreResult:
+            Type: Task
+            Resource: !GetAtt ResultStorageFunction.Arn
+            End: true
+          ValidationFailed:
+            Type: Fail
+            Cause: "Input validation failed."
       RoleArn: !GetAtt StepFunctionsExecutionRole.Arn
