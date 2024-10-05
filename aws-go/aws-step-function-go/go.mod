@@ -1,4 +1,4 @@
-module github.com/dev-toolkit-go/aws-stpe-function-go
+module github.com/dev-toolkit-go/aws-step-function-go
 
 go 1.22.2
 

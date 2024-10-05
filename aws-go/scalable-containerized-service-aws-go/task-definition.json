@@ -1,0 +1,21 @@
+{
+    "family": "go-app-task",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+      {
+        "name": "go-app-container",
+        "image": "590184107255.dkr.ecr.eu-west-2.amazonaws.com/scalable-containerized-service-aws-go:latest",
+        "portMappings": [
+          {
+            "containerPort": 8080,
+            "protocol": "tcp"
+          }
+        ],
+        "essential": true
+      }
+    ],
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::590184107255:role/ecsTaskExecutionRole"
+  }
