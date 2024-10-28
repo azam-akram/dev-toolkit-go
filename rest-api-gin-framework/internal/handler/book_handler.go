@@ -1,4 +1,3 @@
-// internal/handler/book_handler.go
 package handler
 
 import (
@@ -16,20 +15,20 @@ func NewBookHandler() *BookHandler {
 }
 
 func (h *BookHandler) CreateBook(c *gin.Context) {
-	var createDTO model.BookCreateDTO
-	if err := c.ShouldBindJSON(&createDTO); err != nil {
+	var book model.Book
+	if err := c.ShouldBindJSON(&book); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Message: err.Error()})
 		return
 	}
 
 	// Mock response
-	createdBook := model.BookResponseDTO{
+	bookResponse := model.BookResponse{
 		ID:     1,
-		Title:  createDTO.Title,
-		Author: createDTO.Author,
+		Title:  book.Title,
+		Author: book.Author,
 	}
 
-	c.JSON(http.StatusCreated, createdBook)
+	c.JSON(http.StatusCreated, bookResponse)
 }
 
 func (h *BookHandler) GetBook(c *gin.Context) {
@@ -40,13 +39,13 @@ func (h *BookHandler) GetBook(c *gin.Context) {
 	}
 
 	// Mock response
-	book := model.BookResponseDTO{
+	bookResponse := model.BookResponse{
 		ID:     uint(id),
 		Title:  "Sample Book",
 		Author: "Author Name",
 	}
 
-	c.JSON(http.StatusOK, book)
+	c.JSON(http.StatusOK, bookResponse)
 }
 
 func (h *BookHandler) UpdateBook(c *gin.Context) {
@@ -56,20 +55,19 @@ func (h *BookHandler) UpdateBook(c *gin.Context) {
 		return
 	}
 
-	var updateDTO model.BookUpdateDTO
-	if err := c.ShouldBindJSON(&updateDTO); err != nil {
+	var book model.Book
+	if err := c.ShouldBindJSON(&book); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	// Mock response
-	updatedBook := model.BookResponseDTO{
+	bookResponse := model.BookResponse{
 		ID:     uint(id),
-		Title:  updateDTO.Title,
-		Author: updateDTO.Author,
+		Title:  book.Title,
+		Author: book.Author,
 	}
 
-	c.JSON(http.StatusOK, updatedBook)
+	c.JSON(http.StatusOK, bookResponse)
 }
 
 func (h *BookHandler) DeleteBook(c *gin.Context) {
@@ -79,13 +77,11 @@ func (h *BookHandler) DeleteBook(c *gin.Context) {
 		return
 	}
 
-	// Mock response
 	c.JSON(http.StatusNoContent, nil)
 }
 
 func (h *BookHandler) ListBooks(c *gin.Context) {
-	// Mock response
-	books := []model.BookResponseDTO{
+	books := []model.BookResponse{
 		{ID: 1, Title: "Sample Book 1", Author: "Author 1"},
 		{ID: 2, Title: "Sample Book 2", Author: "Author 2"},
 	}
@@ -94,8 +90,7 @@ func (h *BookHandler) ListBooks(c *gin.Context) {
 }
 
 func (h *BookHandler) GetTopRatedBooks(c *gin.Context) {
-	// Mock response
-	topRatedBooks := []model.BookResponseDTO{
+	topRatedBooks := []model.BookResponse{
 		{ID: 1, Title: "Top Rated Book 1", Author: "Author 1"},
 		{ID: 2, Title: "Top Rated Book 2", Author: "Author 2"},
 	}

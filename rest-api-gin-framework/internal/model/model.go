@@ -1,16 +1,11 @@
 package model
 
-type BookCreateDTO struct {
+type Book struct {
 	Title  string `json:"title"`
 	Author string `json:"author"`
 }
 
-type BookUpdateDTO struct {
-	Title  string `json:"title"`
-	Author string `json:"author"`
-}
-
-type BookResponseDTO struct {
+type BookResponse struct {
 	ID     uint   `json:"id"`
 	Title  string `json:"title"`
 	Author string `json:"author"`
