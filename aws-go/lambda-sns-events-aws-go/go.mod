@@ -1,4 +1,4 @@
-module github/dev-toolkit-go/aws-go/lambda-sns-events-aws-go
+module github.com/dev-toolkit-go/aws-go/lambda-sns-events-aws-go
 
 go 1.22.2
 
@@ -7,4 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.53.5
 )
 
-require github.com/jmespath/go-jmespath v0.4.0 // indirect
+require (
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/stretchr/testify v1.9.0 // indirect
+)

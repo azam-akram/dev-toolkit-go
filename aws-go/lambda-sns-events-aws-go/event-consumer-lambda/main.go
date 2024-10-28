@@ -3,57 +3,53 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
-	"github/dev-toolkit-go/rest-api-gin-framework/internal/handler"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 
-	"github.com/gin-gonic/gin"
+	"github.com/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/model"
+	"github.com/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/utils"
 )
 
-func main() {
-	bookHandler := handler.NewBookHandler()
+func HandleRequest(ctx context.Context, snsEvent events.SNSEvent) error {
+	log.Println("Context: ", ctx)
+	log.Println("SNS event received: ", snsEvent)
 
-	router := gin.Default()
-
-	// API v1 routes
-	v1 := router.Group("/api/v1")
-	{
-		// Book routes
-		v1.POST("/books", bookHandler.CreateBook)
-		v1.GET("/books/:id", bookHandler.GetBook)
-		v1.PUT("/books/:id", bookHandler.UpdateBook)
-		v1.DELETE("/books/:id", bookHandler.DeleteBook)
-		v1.GET("/books", bookHandler.ListBooks)
-		v1.GET("/books/top-rated", bookHandler.GetTopRatedBooks)
-	}
-
-	// Graceful shutdown
-	srv := &http.Server{
-		Addr:    ":8080",
-		Handler: router,
-	}
-
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
+	var event model.Event
+	for _, record := range snsEvent.Records {
+		snsRecord := record.SNS
+		err := json.Unmarshal([]byte(snsRecord.Message), &event)
+		if err != nil {
+			return err
 		}
-	}()
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	log.Println("Shutting down server...")
+		outputEvent := model.Event{
+			ID:        event.ID,
+			Name:      "SumCompleted",
+			Source:    "Calculator",
+			EventTime: time.Now().Format(time.RFC3339),
+			Payload: model.Payload{
+				Number1: event.Payload.Number1,
+				Number2: event.Payload.Number2,
+				Answer:  event.Payload.Number1 + event.Payload.Number2,
+			},
+		}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatal("Server forced to shutdown:", err)
+		msgId, err := utils.PublishEvent(ctx, &outputEvent)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Println("Event published to SNS, msgId = ", msgId)
+		return nil
 	}
 
-	log.Println("Server exiting")
+	return nil
+}
+
+func main() {
+	lambda.Start(HandleRequest)
 }
