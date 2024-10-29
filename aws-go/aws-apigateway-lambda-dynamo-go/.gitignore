@@ -1,0 +1,34 @@
+#Program and plugins
+/.bin
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+#Test
+*.test
+
+#Coverage
+*.out
+/.cover
+
+#IDE
+/.idea/
+/.vscode/
+
+#Logs
+*.log
+Collection
+
+# Configurations
+.env
+
+# Developer's helpers
+helper-*
+
+# Archives
+*.zip
+
+# Binaries
+*main

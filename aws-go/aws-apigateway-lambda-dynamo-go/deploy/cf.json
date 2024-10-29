@@ -1,0 +1,239 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "A CF template to create a Lambda function and API Gateway",
+  "Parameters": {
+      "pLambdaCodeBucket": {
+          "Type": "String"
+      },
+      "pLambdaCodeS3KeyPath": {
+          "Type": "String"
+      },
+      "pDynamoARN": {
+          "Type": "String"
+      }
+  },
+  "Resources": {
+      "lfnLambdaRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+              "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                      {
+                          "Effect": "Allow",
+                          "Principal": {
+                              "Service": "lambda.amazonaws.com"
+                          },
+                          "Action": "sts:AssumeRole"
+                      }
+                  ]
+              },
+              "Policies": [
+                  {
+                      "PolicyName": "lambdaCloudWatchPolicy",
+                      "PolicyDocument": {
+                          "Statement": [
+                              {
+                                  "Effect": "Allow",
+                                  "Action": [
+                                      "logs:CreateLogGroup",
+                                      "logs:CreateLogStream",
+                                      "logs:PutLogEvents"
+                                  ],
+                                  "Resource": "*"
+                              }
+                          ]
+                      }
+                  },
+                  {
+                      "PolicyName": "lambdaDynamoPolicy",
+                      "PolicyDocument": {
+                          "Version": "2012-10-17",
+                          "Statement": [
+                              {
+                                  "Effect": "Allow",
+                                  "Action": [
+                                      "dynamodb:GetItem",
+                                      "dynamodb:UpdateItem",
+                                      "dynamodb:Query",
+                                      "dynamodb:PutItem",
+                                      "dynamodb:DeleteItem"
+                                  ],
+                                  "Resource": [
+                                      {
+                                          "Ref": "pDynamoARN"
+                                      }
+                                  ]
+                              }
+                          ]
+                      }
+                  }
+              ]
+          }
+      },
+      "lfnMyDemoLambda": {
+          "Type": "AWS::Lambda::Function",
+          "DependsOn": [
+              "lfnLambdaRole"
+          ],
+          "Properties": {
+              "Architectures": [
+                  "x86_64"
+              ],
+              "Runtime": "provided.al2023",
+              "Handler": "main",
+              "Code": {
+                  "S3Bucket": {
+                      "Ref": "pLambdaCodeBucket"
+                  },
+                  "S3Key": {
+                      "Ref": "pLambdaCodeS3KeyPath"
+                  }
+              },
+              "Description": "This is my demo lambda function",
+              "FunctionName": "my-demo-lambda",
+              "Role": {
+                  "Fn::GetAtt": [
+                      "lfnLambdaRole",
+                      "Arn"
+                  ]
+              },
+              "Timeout": 120
+          }
+      },
+      "ApiGatewayRestApi": {
+          "Type": "AWS::ApiGateway::RestApi",
+          "Properties": {
+              "Name": "MyDemoApi"
+          }
+      },
+      "ApiGatewayResourceBooks": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+              "ParentId": {
+                  "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"]
+              },
+              "PathPart": "books",
+              "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+              }
+          }
+      },
+      "ApiGatewayMethodBooksPost": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "POST",
+              "ResourceId": {
+                  "Ref": "ApiGatewayResourceBooks"
+              },
+              "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+              },
+              "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                      "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lfnMyDemoLambda.Arn}/invocations"
+                  }
+              }
+          }
+      },
+      "ApiGatewayMethodBooksGet": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "GET",
+              "ResourceId": {
+                  "Ref": "ApiGatewayResourceBooks"
+              },
+              "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+              },
+              "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                      "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lfnMyDemoLambda.Arn}/invocations"
+                  }
+              }
+          }
+      },
+      "ApiGatewayMethodBooksPut": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "PUT",
+              "ResourceId": {
+                  "Ref": "ApiGatewayResourceBooks"
+              },
+              "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+              },
+              "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                      "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lfnMyDemoLambda.Arn}/invocations"
+                  }
+              }
+          }
+      },
+      "ApiGatewayMethodBooksDelete": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "DELETE",
+              "ResourceId": {
+                  "Ref": "ApiGatewayResourceBooks"
+              },
+              "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+              },
+              "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                      "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lfnMyDemoLambda.Arn}/invocations"
+                  }
+              }
+          }
+      },
+      "ApiGatewayDeployment": {
+          "Type": "AWS::ApiGateway::Deployment",
+          "DependsOn": [
+              "ApiGatewayMethodBooksPost",
+              "ApiGatewayMethodBooksGet",
+              "ApiGatewayMethodBooksPut",
+              "ApiGatewayMethodBooksDelete"
+          ],
+          "Properties": {
+              "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "prod"
+          }
+      },
+      "LambdaInvokePermission": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+              "Action": "lambda:InvokeFunction",
+              "FunctionName": {
+                  "Ref": "lfnMyDemoLambda"
+              },
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                  "Fn::Sub": "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*"
+              }
+          }
+      }
+  },
+  "Outputs": {
+      "ApiUrl": {
+          "Description": "API Gateway endpoint URL for Prod stage",
+          "Value": {
+              "Fn::Sub": "https://${ApiGatewayRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+          }
+      }
+  }
+}
