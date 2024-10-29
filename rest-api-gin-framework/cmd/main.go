@@ -20,10 +20,8 @@ func main() {
 
 	router := gin.Default()
 
-	// API v1 routes
 	v1 := router.Group("/api/v1")
 	{
-		// Book routes
 		v1.POST("/books", bookHandler.CreateBook)
 		v1.GET("/books/:id", bookHandler.GetBook)
 		v1.PUT("/books/:id", bookHandler.UpdateBook)
@@ -32,7 +30,6 @@ func main() {
 		v1.GET("/books/top-rated", bookHandler.GetTopRatedBooks)
 	}
 
-	// Graceful shutdown
 	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: router,

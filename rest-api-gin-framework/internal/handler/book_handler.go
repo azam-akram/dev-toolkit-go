@@ -21,7 +21,6 @@ func (h *BookHandler) CreateBook(c *gin.Context) {
 		return
 	}
 
-	// Mock response
 	bookResponse := model.BookResponse{
 		ID:     1,
 		Title:  book.Title,
@@ -38,7 +37,6 @@ func (h *BookHandler) GetBook(c *gin.Context) {
 		return
 	}
 
-	// Mock response
 	bookResponse := model.BookResponse{
 		ID:     uint(id),
 		Title:  "Sample Book",
