@@ -1,4 +1,4 @@
-// cmd/server/main.go
+
 package main
 
 import (
@@ -16,8 +16,21 @@ import (
 )
 
 func main() {
-	bookHandler := handler.NewBookHandler()
+	router := setupRouter()
+	srv := &http.Server{Addr: ":8080", Handler: router}
 
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	waitForShutdown(srv)
+	log.Println("Server exiting")
+}
+
+func setupRouter() *gin.Engine {
+	bookHandler := handler.NewBookHandler()
 	router := gin.Default()
 
 	v1 := router.Group("/api/v1")
@@ -29,18 +42,10 @@ func main() {
 		v1.GET("/books", bookHandler.ListBooks)
 		v1.GET("/books/top-rated", bookHandler.GetTopRatedBooks)
 	}
+	return router
+}
 
-	srv := &http.Server{
-		Addr:    ":8080",
-		Handler: router,
-	}
-
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
-		}
-	}()
-
+func waitForShutdown(srv *http.Server) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
@@ -51,6 +56,4 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal("Server forced to shutdown:", err)
 	}
-
-	log.Println("Server exiting")
 }
