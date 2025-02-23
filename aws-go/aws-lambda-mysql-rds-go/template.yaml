@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudFormation template to create an RDS MySQL instance and Lambda function"
+
+Parameters:
+  pMySqlUsername:
+    Type: String
+    Description: MySQL user name.
+  pMySqlPassword:
+    Type: String
+    Description: MySQL password.
+  pS3BucketName:
+    Type: String
+    Description: "Name of the S3 bucket containing the Lambda function ZIP file"
+  pS3Key:
+    Type: String
+    Description: "Key (path) of the Lambda function ZIP file in the S3 bucket"
+
+Resources:
+  MyDBSubnetGroup:
+    Type: "AWS::RDS::DBSubnetGroup"
+    Properties:
+      DBSubnetGroupName: "rdsSubnetgroup"
+      DBSubnetGroupDescription: "Subnet group for RDS MySQL"
+      SubnetIds:
+        - "subnet-067780bb6c1ccc356"
+        - "subnet-06ec583944176ab87"
+  MyDBInstance:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      DBInstanceIdentifier: "student-db"
+      AllocatedStorage: 20
+      DBInstanceClass: "db.t3.micro"
+      Engine: "mysql"
+      EngineVersion: "8.0"
+      MasterUsername: !Ref pMySqlUsername
+      MasterUserPassword: !Ref pMySqlPassword
+      DBSubnetGroupName: !Ref MyDBSubnetGroup
+      PubliclyAccessible: true
+      BackupRetentionPeriod: 7
+      MultiAZ: false
+      StorageType: "gp2"
+      VPCSecurityGroups:
+        - "sg-07664ca9e8d5a597c"
+  LambdaExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "LambdaRDSExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "LambdaRDSPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "rds:DescribeDBInstances"
+                  - "rds:Connect"
+                  - "rds-data:ExecuteStatement"
+                  - "rds-data:BatchExecuteStatement"
+                  - "rds-db:connect"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "*"
+  MyLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: "StudentCRUDLambda"
+      Runtime: "provided.al2023"
+      Handler: "main"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref pS3BucketName
+        S3Key: !Ref pS3Key
+      Environment:
+        Variables:
+          DB_HOST: !GetAtt MyDBInstance.Endpoint.Address
+          DB_USER: !Ref pMySqlUsername
+          DB_PASS: !Ref pMySqlPassword
+          DB_NAME: "student_db"
+      MemorySize: 128
+      Timeout: 15
+  MyApiGateway:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "StudentCRUDAPI"
+      Description: "API Gateway for Student CRUD operations"
+  StudentsResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      ParentId: !GetAtt MyApiGateway.RootResourceId
+      PathPart: "students"
+      RestApiId: !Ref MyApiGateway
+  PostStudentMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref MyApiGateway
+      ResourceId: !Ref StudentsResource
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      Integration:
+        Type: "AWS_PROXY"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations"
+  MyApiDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    DependsOn: PostStudentMethod
+    Properties:
+      RestApiId: !Ref MyApiGateway
+      StageName: "dev"
+  LambdaApiPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref MyLambdaFunction
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MyApiGateway}/*"
+
+
+Outputs:
+  RDSInstanceEndpoint:
+    Description: "RDS MySQL Instance Endpoint"
+    Value: !GetAtt MyDBInstance.Endpoint.Address
+
+  LambdaFunctionArn:
+    Description: "ARN of the Lambda function"
+    Value: !GetAtt MyLambdaFunction.Arn
+
+  ApiGatewayInvokeURL:
+    Description: "Invoke URL for API Gateway"
+    Value: !Sub "https://${MyApiGateway}.execute-api.${AWS::Region}.amazonaws.com/prod/students"
+

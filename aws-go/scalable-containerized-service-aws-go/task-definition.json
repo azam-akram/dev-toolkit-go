@@ -4,7 +4,7 @@
     "containerDefinitions": [
       {
         "name": "go-app-container",
-        "image": "590184107255.dkr.ecr.eu-west-2.amazonaws.com/scalable-containerized-service-aws-go:latest",
+        "image": "<ACCOUNT-ID>.dkr.ecr.eu-west-2.amazonaws.com/scalable-containerized-service-aws-go:latest",
         "portMappings": [
           {
             "containerPort": 8080,
@@ -17,5 +17,5 @@
     "requiresCompatibilities": ["FARGATE"],
     "cpu": "256",
     "memory": "512",
-    "executionRoleArn": "arn:aws:iam::590184107255:role/ecsTaskExecutionRole"
+    "executionRoleArn": "arn:aws:iam::<ACCOUNT-ID>:role/ecsTaskExecutionRole"
   }

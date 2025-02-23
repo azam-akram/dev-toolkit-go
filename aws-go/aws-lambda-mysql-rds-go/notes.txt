@@ -1,0 +1,54 @@
+1. 
+GOOS=linux GOARCH=amd64 go build -o main
+
+2. linux  
+  zip function.zip main
+
+2. windows 
+  build-lambda-zip.exe -o aws-lambda-demo-go.zip main
+
+  
+
+SubnetIds:
+        - "subnet-067780bb6c1ccc356"
+        - "subnet-06ec583944176ab87"
+
+- "sg-07664ca9e8d5a597c"
+
+
+
+aws s3 mb s3://<bucket-name>
+$ aws s3 mb s3://my-bucket-for-test-work-mbmb23
+
+aws s3 mb s3://my-bucket-for-test-work-mbmb23 --region eu-west-2
+
+
+aws s3 cp aws-lambda-demo-go.zip s3://my-bucket-for-test-work-mbmb23/lambda-rds/aws-lambda-demo-go.zip
+
+
+aws cloudformation deploy \
+--template-file ./template.yaml \
+--stack-name api-lambda-mysql-rds-stack \
+--capabilities CAPABILITY_NAMED_IAM \
+--parameter-overrides \
+  pMySqlUsername=admin \
+  pMySqlPassword=MySecurePassword \
+  pS3BucketName=my-bucket-for-test-work-mbmb23 \
+  pS3Key=lambda-rds/aws-lambda-demo-go.zip
+
+
+
+test
+
+	
+
+
+curl -X POST "https://z4ieqqlx15.execute-api.eu-west-2.amazonaws.com/prod/students" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Bob", "email":"bob@example.com", "age":22}'
+
+
+
+delete stack
+
+aws cloudformation delete-stack --stack-name api-lambda-mysql-rds-stack
