@@ -1,6 +1,6 @@
 module github/dev-toolkit-go/utils-go/json-utils-go
 
-go 1.22.2
+go 1.24.5
 
 require (
 	github.com/azam-akram/json-helper-go v1.0.0

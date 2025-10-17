@@ -1,40 +1,30 @@
-
 package main
 
 import (
-	"context"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
-
 	"github/dev-toolkit-go/rest-api-gin-framework/internal/handler"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := setupRouter()
-	srv := &http.Server{Addr: ":8080", Handler: router}
 
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
-		}
-	}()
+	log.Println("Starting server on http://localhost:8080")
 
-	waitForShutdown(srv)
-	log.Println("Server exiting")
+	if err := router.Run(":8080"); err != nil {
+		log.Fatalf("Server failed to start: %v", err)
+	}
 }
 
 func setupRouter() *gin.Engine {
 	bookHandler := handler.NewBookHandler()
+
 	router := gin.Default()
 
-	v1 := router.Group("/api/v1")
+	v1 := router.Group("/v1")
 	{
+		// Bookstore API Endpoints (CRUD + custom)
 		v1.POST("/books", bookHandler.CreateBook)
 		v1.GET("/books/:id", bookHandler.GetBook)
 		v1.PUT("/books/:id", bookHandler.UpdateBook)
@@ -42,18 +32,6 @@ func setupRouter() *gin.Engine {
 		v1.GET("/books", bookHandler.ListBooks)
 		v1.GET("/books/top-rated", bookHandler.GetTopRatedBooks)
 	}
+
 	return router
-}
-
-func waitForShutdown(srv *http.Server) {
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	log.Println("Shutting down server...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatal("Server forced to shutdown:", err)
-	}
 }

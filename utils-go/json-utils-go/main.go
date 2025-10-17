@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	//"github/dev-toolkit-go/utils-go/json-utils-go/handler"
+	"dev-toolkit-go/utils-go/json-utils-go/logger"
 
 	jsonhelper "github.com/azam-akram/json-helper-go"
 )
@@ -37,5 +36,8 @@ func main() {
 	jsonHelper := jsonhelper.NewJsonHelper()
 	jsonHelper.StringToMap(empStr)
 
-	fmt.Print(empStr)
+	logLevel := "INFO"
+	log := logger.Init(logLevel)
+	log.Info(empStr)
+
 }
