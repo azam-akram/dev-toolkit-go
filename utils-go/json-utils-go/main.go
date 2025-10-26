@@ -28,11 +28,6 @@ var empStr = `{
 }`
 
 func main() {
-	//jsonHandler := handler.NewJsonHandler()
-	//jsonHandler.DisplayAllJsonHandlers(empStr)
-
-	//fmt.Print("--------------------")
-
 	jsonHelper := jsonhelper.NewJsonHelper()
 	jsonHelper.StringToMap(empStr)
 

@@ -4,31 +4,32 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github/dev-toolkit-go/utils-go/json-utils-go/logger"
 )
 
 var handler Handler
 
 type JsonHandler struct {
-	logger Logger
+	logger logger.Logger
 }
 
 func NewJsonHandler() Handler {
 	if handler == nil {
 		handler = &JsonHandler{
-			logger: GetLogger(),
+			logger: logger.Init("info"),
 		}
 	}
 	return handler
 }
 
-func (jh JsonHandler) GetLogger() Logger {
+func (jh JsonHandler) GetLogger() logger.Logger {
 	if jh.logger == nil {
-		jh.logger = GetLogger()
+		jh.logger = logger.Get()
 	}
 	return jh.logger
 }
 
-func (jHandler JsonHandler) ConvertGenericInterfaceToMap() {
+func (jh JsonHandler) ConvertGenericInterfaceToMap() {
 	b := []byte(`{"k1":"v1","k2":6,"k3":["v3","v4"]}`)
 	//fmt.Println(b)
 	var i interface{}
@@ -123,70 +124,70 @@ func (jh JsonHandler) ModifyInputJson(s string) (map[string]interface{}, error) 
 		return nil, errors.New("cannot convert string to map")
 	}
 
-	jh.logger.PrintKeyValue("Before modification", "mapToProcess", mapToProcess)
+	jh.logger.Info("Before modification", "mapToProcess", mapToProcess)
 	mapToProcess["degree"] = "phd"
-	jh.logger.PrintKeyValue("After adding a new key-value", "mapToProcess", mapToProcess)
+	jh.logger.Info("After adding a new key-value", "mapToProcess", mapToProcess)
 
 	return mapToProcess, nil
 }
 
-func (h JsonHandler) DisplayAllJsonHandlers(str string) {
+func (jh JsonHandler) DisplayAllJsonHandlers(str string) {
 	//h.ConvertGenericInterfaceToMap()
 
 	var emp Employee
-	err := h.StringToStruct(str, &emp)
+	err := jh.StringToStruct(str, &emp)
 	if err != nil {
-		GetLogger().Print(err)
+		jh.GetLogger().Error("Error in converting string to struct", "error", err)
 	}
 
-	GetLogger().PrintKeyValue("DisplayAllJsonHandlers::StringToStruct", "emp", emp)
+	jh.GetLogger().Info("DisplayAllJsonHandlers::StringToStruct", "emp", emp)
 
-	str, err = h.StructToString(emp)
+	str, err = jh.StructToString(emp)
 	if err != nil {
-		GetLogger().Print(err)
+		jh.GetLogger().Info("Error in converting struct to string", "emp", emp)
 	}
-	GetLogger().PrintKeyValue("DisplayAllJsonHandlers::ConvertStructToString", "str", str)
+	jh.GetLogger().Info("DisplayAllJsonHandlers::ConvertStructToString", "str", str)
 
-	jMap, err := h.StringToMap(str)
+	jMap, err := jh.StringToMap(str)
 	if err != nil {
-		GetLogger().Print(err)
+		jh.GetLogger().Error("Error in StringToMap", "error", err)
 	}
-	GetLogger().PrintKeyValue("DisplayAllJsonHandlers::ConvertStringToMap", "jMap", jMap)
+	jh.GetLogger().Info("DisplayAllJsonHandlers::ConvertStringToMap", "jMap", jMap)
 
 	mapData := map[string]interface{}{
 		"id":   "The ID",
 		"user": "The User",
 	}
 
-	mapStr, err := h.MapToString(mapData)
+	mapStr, err := jh.MapToString(mapData)
 	if err != nil {
-		GetLogger().Print(err)
+		jh.GetLogger().Error("Error in MapToString", "error", err)
 	}
 
-	GetLogger().PrintKeyValue("DisplayAllJsonHandlers::ConvertMapToString", "mapStr", mapStr)
+	jh.GetLogger().Info("DisplayAllJsonHandlers::ConvertMapToString", "mapStr", mapStr)
 
-	jsonBytes := h.StringToBytes(mapStr)
-	GetLogger().PrintKeyValue("DisplayAllJsonHandlers::ConvertStringToByte", "jsonBytes", jsonBytes)
+	jsonBytes := jh.StringToBytes(mapStr)
+	jh.GetLogger().Info("DisplayAllJsonHandlers::ConvertStringToByte", "jsonBytes", jsonBytes)
 
-	bytesStr := h.BytesToString(jsonBytes)
-	GetLogger().PrintKeyValue("DisplayAllJsonHandlers::ConvertByteToString", "bytesStr", bytesStr)
+	bytesStr := jh.BytesToString(jsonBytes)
+	jh.GetLogger().Info("DisplayAllJsonHandlers::ConvertByteToString", "bytesStr", bytesStr)
 
-	jsonBytes, err = h.StructToBytes(emp)
+	jsonBytes, err = jh.StructToBytes(emp)
 	if err != nil {
-		GetLogger().Print(err)
+		jh.GetLogger().Error("Error in StructToBytes", "error", err)
 	}
-	GetLogger().PrintKeyValue("DisplayAllJsonHandlers::ConvertStructToByte", "jsonBytes", jsonBytes)
+	jh.GetLogger().Info("DisplayAllJsonHandlers::ConvertStructToByte", "jsonBytes", jsonBytes)
 
-	err = h.BytesToStruct(jsonBytes, &emp)
+	err = jh.BytesToStruct(jsonBytes, &emp)
 	if err != nil {
-		GetLogger().Print(err)
+		jh.GetLogger().Error("Error in BytesToStruct", "error", err)
 	}
-	GetLogger().PrintKeyValue("DisplayAllJsonHandlers::ConvertByteToStruct", "emp", emp)
+	jh.GetLogger().Info("DisplayAllJsonHandlers::ConvertByteToStruct", "emp", emp)
 
-	modifiedEmpMap, err := h.ModifyInputJson(str)
+	modifiedEmpMap, err := jh.ModifyInputJson(str)
 	if err != nil {
-		GetLogger().Print(err)
+		jh.GetLogger().Error("Error in ModifyInputJson", "error", err)
 	}
 
-	GetLogger().PrintKeyValue("DisplayAllJsonHandlers::ModifyInputJson", "modifiedEmpMap", modifiedEmpMap)
+	jh.GetLogger().Info("DisplayAllJsonHandlers::ModifyInputJson", "modifiedEmpMap", modifiedEmpMap)
 }
