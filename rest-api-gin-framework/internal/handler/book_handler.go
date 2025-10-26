@@ -105,8 +105,8 @@ func (h *BookHandler) DeleteBook(c *gin.Context) {
 
 func (h *BookHandler) ListBooks(c *gin.Context) {
 	books := []model.BookResponse{
-		{ID: 101, Title: "The Fellowship of the Ring", Author: "J.R.R. Tolkien", Rating: 5},
-		{ID: 102, Title: "The Hitchhiker's Guide to the Galaxy", Author: "Douglas Adams", Rating: 4},
+		{ID: 101, Title: "Favourite Book 1", Author: "Favourite Author 1 ", Rating: 5},
+		{ID: 102, Title: "Favourite Book 1", Author: "Favourite Author 2", Rating: 4},
 	}
 
 	c.JSON(http.StatusOK, books)
@@ -114,8 +114,8 @@ func (h *BookHandler) ListBooks(c *gin.Context) {
 
 func (h *BookHandler) GetTopRatedBooks(c *gin.Context) {
 	topRatedBooks := []model.BookResponse{
-		{ID: 201, Title: "Go in Practice", Author: "Kaleb Keithley", Rating: 5},
-		{ID: 202, Title: "Clean Code", Author: "Robert C. Martin", Rating: 4},
+		{ID: 201, Title: "Favourite Book 1", Author: "Favourite Author 1", Rating: 5},
+		{ID: 202, Title: "Favourite Book 2", Author: "Favourite Author 2", Rating: 4},
 	}
 
 	c.JSON(http.StatusOK, topRatedBooks)
