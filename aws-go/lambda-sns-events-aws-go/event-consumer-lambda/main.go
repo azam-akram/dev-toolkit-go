@@ -4,14 +4,13 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"github/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/model"
+	"github/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/utils"
 	"log"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-
-	"github.com/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/model"
-	"github.com/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/utils"
 )
 
 func HandleRequest(ctx context.Context, snsEvent events.SNSEvent) error {

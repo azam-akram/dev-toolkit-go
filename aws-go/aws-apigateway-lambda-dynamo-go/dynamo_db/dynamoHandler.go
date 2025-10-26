@@ -1,6 +1,7 @@
 package dynamo_db
 
 import (
+	"github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/model"
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -9,7 +10,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/dev-toolkit-go/aws-apigateway-lambda-demo-go/model"
 )
 
 var handler DBHandler

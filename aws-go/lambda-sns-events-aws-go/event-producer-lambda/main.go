@@ -3,9 +3,8 @@ package main
 import (
 	"context"
 	"encoding/json"
-
-	"github.com/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/model"
-	"github.com/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/utils"
+	"github/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/model"
+	"github/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/utils"
 
 	"log"
 	"time"
