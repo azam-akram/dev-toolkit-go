@@ -1,6 +1,6 @@
 module github/dev-toolkit-go/goUtils/httpUtils
 
-go 1.22.2
+go 1.25.3
 
 require github.com/go-resty/resty/v2 v2.13.1
 
