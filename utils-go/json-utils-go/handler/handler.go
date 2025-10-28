@@ -1,14 +1,15 @@
 package handler
 
 type Handler interface {
-	StringToStruct(s string, i interface{}) error
-	StructToString(i interface{}) (string, error)
-	StringToMap(s string) (map[string]interface{}, error)
-	MapToString(m map[string]interface{}) (string, error)
-	BytesToString(jsonBytes []byte) string
-	StringToBytes(s string) []byte
-	StructToBytes(i interface{}) (jsonBytes []byte, err error)
-	BytesToStruct(b []byte, d interface{}) error
-	ModifyInputJson(s string) (map[string]interface{}, error)
-	DisplayAllJsonHandlers(str string)
+	StringToStruct(string, any) error
+	StructToString(any) (string, error)
+	StringToMap(string) (map[string]any, error)
+	MapToString(map[string]any) (string, error)
+	BytesToString([]byte) string
+	StringToBytes(string) []byte
+	StructToBytes(any) ([]byte, error)
+	BytesToStruct([]byte, any) error
+	ModifyInputJson(string) (map[string]any, error)
+	ProcessGenericMap(map[string]any)
+	DisplayAllJsonHandlers(string)
 }

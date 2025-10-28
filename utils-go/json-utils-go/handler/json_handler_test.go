@@ -32,26 +32,21 @@ func Test_StringToStruct_Success(t *testing.T) {
 	assertThat := assert.New(t)
 
 	jh := NewJsonHandler()
-
 	var emp Employee
+
 	err := jh.StringToStruct(testEmpStr, &emp)
 	assertThat.Nil(err)
 
 	assertThat.Equal(emp.ID, "The ID")
 	assertThat.Equal(emp.Name, "The User")
-}
-
-func Test_StringToStruct_EmployeeShort_Success(t *testing.T) {
-	assertThat := assert.New(t)
-
-	jh := NewJsonHandler()
-
-	var emp EmployeeShort
-	err := jh.StringToStruct(testEmpStr, &emp)
-	assertThat.Nil(err)
-
-	assertThat.Equal(emp.ID, "The ID")
-	assertThat.Equal(emp.Name, "The User")
+	assertThat.Equal(emp.Addresses[0].DoorNumber, 1)
+	assertThat.Equal(emp.Addresses[0].Street, "The office street 1")
+	assertThat.Equal(emp.Addresses[0].City, "The office city 1")
+	assertThat.Equal(emp.Addresses[0].Country, "The office country 1")
+	assertThat.Equal(emp.Addresses[1].DoorNumber, 2)
+	assertThat.Equal(emp.Addresses[1].Street, "The home street 2")
+	assertThat.Equal(emp.Addresses[1].City, "The home city 2")
+	assertThat.Equal(emp.Addresses[1].Country, "The home country 2")
 }
 
 func Test_StructToString_Success(t *testing.T) {
@@ -89,7 +84,7 @@ func Test_MapToString_Success(t *testing.T) {
 
 	expectedRes := "{\"id\":\"The ID\",\"name\":\"The User\"}"
 
-	mapData := map[string]interface{}{
+	mapData := map[string]any{
 		"id":   "The ID",
 		"name": "The User",
 	}
@@ -159,6 +154,24 @@ func Test_ModifyInputJson_Success(t *testing.T) {
 	assert.NotNil(t, modifiedEmpMap)
 	assertThat.Equal(modifiedEmpMap["degree"], "phd")
 	assertThat.Equal(modifiedEmpMap["name"], "The User")
+}
+
+func Test_ProcessGenericMap(t *testing.T) {
+	jh := NewJsonHandler()
+
+	testMap := map[string]any{
+		"StringField":  "Hello World",
+		"NumberField":  123.45,
+		"BooleanField": true,
+		"ArrayField": []any{
+			"element_string",
+			99.9,
+			false,
+		},
+		"ObjectField": map[string]any{"inner": "value"},
+	}
+
+	jh.ProcessGenericMap(testMap)
 }
 
 func Test_DisplayAllJsonHandlers_Success(t *testing.T) {

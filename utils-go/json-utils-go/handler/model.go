@@ -14,7 +14,7 @@ type Address struct {
 	Country    string `json:"country,omitempty"`
 }
 
-type EmployeeShort struct {
+/*type EmployeeShort struct {
 	ID   string `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
-}
+}*/
