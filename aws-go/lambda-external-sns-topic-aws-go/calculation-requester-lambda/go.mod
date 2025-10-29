@@ -1,10 +1,10 @@
 module github/dev-toolkit-go/aws-go/lambda-external-sns-topic-aws-go/calculation-requester-lambda
 
-go 1.22.2
+go 1.25.3
 
 require (
-	github.com/aws/aws-lambda-go v1.41.0
-	github.com/aws/aws-sdk-go v1.44.306
+	github.com/aws/aws-lambda-go v1.50.0
+	github.com/aws/aws-sdk-go v1.55.8
 	github.com/stretchr/testify v1.8.4
 )
 

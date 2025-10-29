@@ -1,5 +1,5 @@
 module github/dev-toolkit-go/aws-go/lambda-cron-aws-go
 
-go 1.22.2
+go 1.25.3
 
-require github.com/aws/aws-lambda-go v1.37.0
+require github.com/aws/aws-lambda-go v1.50.0

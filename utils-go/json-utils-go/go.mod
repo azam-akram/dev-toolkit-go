@@ -4,7 +4,7 @@ go 1.25.3
 
 require (
 	github.com/azam-akram/json-helper-go v1.0.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.11.1
 )
 
 require (

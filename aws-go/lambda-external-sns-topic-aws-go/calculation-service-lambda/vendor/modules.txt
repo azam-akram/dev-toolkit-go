@@ -1,11 +1,11 @@
-# github.com/aws/aws-lambda-go v1.47.0
+# github.com/aws/aws-lambda-go v1.50.0
 ## explicit; go 1.18
 github.com/aws/aws-lambda-go/events
 github.com/aws/aws-lambda-go/lambda
 github.com/aws/aws-lambda-go/lambda/handlertrace
 github.com/aws/aws-lambda-go/lambda/messages
 github.com/aws/aws-lambda-go/lambdacontext
-# github.com/aws/aws-sdk-go v1.53.5
+# github.com/aws/aws-sdk-go v1.55.8
 ## explicit; go 1.19
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/auth/bearer
@@ -59,8 +59,8 @@ github.com/jmespath/go-jmespath
 # github.com/pmezard/go-difflib v1.0.0
 ## explicit
 github.com/pmezard/go-difflib/difflib
-# github.com/stretchr/testify v1.9.0
-## explicit; go 1.17
+# github.com/stretchr/testify v1.8.4
+## explicit; go 1.20
 github.com/stretchr/testify/assert
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
