@@ -1,49 +1,48 @@
 package dynamo_db
 
 import (
+	"context"
 	"github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/model"
 	"log"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
-
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
 var handler DBHandler
 
 type DynamoHandler struct {
-	tableName   string
-	dynamoDBAPI dynamodbiface.DynamoDBAPI
+	tableName      string
+	dynamoDBClient *dynamodb.Client
 }
 
 func NewDynamoHandler(tName string) DBHandler {
 	if handler == nil {
 		handler = &DynamoHandler{
-			tableName:   tName,
-			dynamoDBAPI: getDynamoInterface(),
+			tableName:      tName,
+			dynamoDBClient: getDynamoClient(),
 		}
 	}
 	return handler
 }
 
-func getDynamoInterface() dynamodbiface.DynamoDBAPI {
-	dynamoSession := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+func getDynamoClient() *dynamodb.Client {
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		log.Fatalf("unable to load SDK config, %v", err)
+	}
 
-	dynamoInstance := dynamodb.New(dynamoSession)
-
-	return dynamodbiface.DynamoDBAPI(dynamoInstance)
+	return dynamodb.NewFromConfig(cfg)
 }
 
-func convertToDBRecord(book *model.MyBook) map[string]*dynamodb.AttributeValue {
-	item := map[string]*dynamodb.AttributeValue{
-		"id":     {S: &book.ID},
-		"title":  {S: &book.Title},
-		"author": {S: &book.Author},
+func convertToDBRecord(book *model.MyBook) map[string]types.AttributeValue {
+	item := map[string]types.AttributeValue{
+		"id":     &types.AttributeValueMemberS{Value: book.ID},
+		"title":  &types.AttributeValueMemberS{Value: book.Title},
+		"author": &types.AttributeValueMemberS{Value: book.Author},
 	}
 	return item
 }
@@ -54,7 +53,7 @@ func (h *DynamoHandler) Save(book *model.MyBook) error {
 		TableName: aws.String(h.tableName),
 	}
 
-	savedItem, err := h.dynamoDBAPI.PutItem(input)
+	savedItem, err := h.dynamoDBClient.PutItem(context.TODO(), input)
 	if err != nil {
 		log.Fatal("Failed to save Item: ", err.Error())
 		return err
@@ -66,7 +65,7 @@ func (h *DynamoHandler) Save(book *model.MyBook) error {
 }
 
 func (h *DynamoHandler) Update(book *model.MyBook) error {
-	item, err := dynamodbattribute.MarshalMap(book)
+	item, err := attributevalue.MarshalMap(book)
 	if err != nil {
 		return err
 	}
@@ -76,7 +75,7 @@ func (h *DynamoHandler) Update(book *model.MyBook) error {
 		TableName: aws.String(h.tableName),
 	}
 
-	updatedItem, err := h.dynamoDBAPI.PutItem(input)
+	updatedItem, err := h.dynamoDBClient.PutItem(context.TODO(), input)
 	if err != nil {
 		return err
 	}
@@ -87,21 +86,17 @@ func (h *DynamoHandler) Update(book *model.MyBook) error {
 
 func (h *DynamoHandler) UpdateAttributeByID(id, key, value string) error {
 	input := dynamodb.UpdateItemInput{
-		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":val": {
-				S: aws.String(value),
-			},
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":val": &types.AttributeValueMemberS{Value: value},
 		},
-		Key: map[string]*dynamodb.AttributeValue{
-			"id": {
-				S: aws.String(id),
-			},
+		Key: map[string]types.AttributeValue{
+			"id": &types.AttributeValueMemberS{Value: id},
 		},
 		TableName:        aws.String(h.tableName),
 		UpdateExpression: aws.String("set " + key + " = :val"),
 	}
 
-	output, err := h.dynamoDBAPI.UpdateItem(&input)
+	output, err := h.dynamoDBClient.UpdateItem(context.TODO(), &input)
 	if err != nil {
 		return err
 	}
@@ -114,23 +109,23 @@ func (h *DynamoHandler) UpdateAttributeByID(id, key, value string) error {
 func (h *DynamoHandler) GetByID(id string) (*model.MyBook, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(h.tableName),
-		Key: map[string]*dynamodb.AttributeValue{
-			"id": {S: aws.String(id)},
+		Key: map[string]types.AttributeValue{
+			"id": &types.AttributeValueMemberS{Value: id},
 		},
 	}
 
-	item, err := h.dynamoDBAPI.GetItem(input)
+	item, err := h.dynamoDBClient.GetItem(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
 
 	if item.Item == nil {
-		log.Fatal("Can't get item by id = ", id)
+		log.Println("Can't get item by id =", id)
 		return nil, nil
 	}
 
 	var book model.MyBook
-	err = dynamodbattribute.UnmarshalMap(item.Item, &book)
+	err = attributevalue.UnmarshalMap(item.Item, &book)
 	if err != nil {
 		return nil, err
 	}
@@ -141,12 +136,12 @@ func (h *DynamoHandler) GetByID(id string) (*model.MyBook, error) {
 func (h *DynamoHandler) DeleteByID(id string) error {
 	input := &dynamodb.DeleteItemInput{
 		TableName: aws.String(h.tableName),
-		Key: map[string]*dynamodb.AttributeValue{
-			"id": {S: aws.String(id)},
+		Key: map[string]types.AttributeValue{
+			"id": &types.AttributeValueMemberS{Value: id},
 		},
 	}
 
-	_, err := h.dynamoDBAPI.DeleteItem(input)
+	_, err := h.dynamoDBClient.DeleteItem(context.TODO(), input)
 	if err != nil {
 		log.Fatal("Can't delete item by id = ", id)
 		return err
