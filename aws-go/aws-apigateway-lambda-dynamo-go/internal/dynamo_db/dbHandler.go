@@ -1,6 +1,6 @@
 package dynamo_db
 
-import "github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/model"
+import "github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/internal/model"
 
 type DBHandler interface {
 	Save(book *model.MyBook) error

@@ -1,14 +1,14 @@
-package main
+package handler
 
 import (
 	"context"
 	"encoding/json"
-	"github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/dynamo_db"
-	"github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/model"
+	"github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/internal/dynamo_db"
+	"github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/internal/model"
+
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-lambda-go/lambda"
 )
 
 func HandleRequest(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -60,8 +60,4 @@ func HandleRequest(ctx context.Context, req events.APIGatewayProxyRequest) (even
 	default:
 		return events.APIGatewayProxyResponse{StatusCode: http.StatusMethodNotAllowed}, nil
 	}
-}
-
-func main() {
-	lambda.Start(HandleRequest)
 }
