@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github/dev-toolkit-go/utils-go/json-utils-go/logger"
+	"dev-toolkit-go/utils-go/json-utils-go/logger"
 
 	jsonhelper "github.com/azam-akram/json-helper-go"
 )

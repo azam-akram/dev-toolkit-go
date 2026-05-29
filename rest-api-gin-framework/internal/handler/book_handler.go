@@ -1,10 +1,9 @@
 package handler
 
 import (
+	"dev-toolkit-go/rest-api-gin-framework/internal/model"
 	"net/http"
 	"strconv"
-
-	"github/dev-toolkit-go/rest-api-gin-framework/internal/model"
 
 	"github.com/gin-gonic/gin"
 )

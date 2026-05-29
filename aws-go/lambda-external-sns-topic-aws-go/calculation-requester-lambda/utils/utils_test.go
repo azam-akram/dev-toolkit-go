@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"dev-toolkit-go/aws-go/lambda-external-sns-topic-aws-go/calculation-requester-lambda/model"
 	"encoding/json"
-	"github/dev-toolkit-go/aws-go/lambda-external-sns-topic-aws-go/calculation-requester-lambda/model"
 
 	"testing"
 	"time"

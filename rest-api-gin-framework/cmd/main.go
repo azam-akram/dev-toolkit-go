@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github/dev-toolkit-go/rest-api-gin-framework/internal/handler"
+	"dev-toolkit-go/rest-api-gin-framework/internal/handler"
 	"log"
 
 	"github.com/gin-gonic/gin"

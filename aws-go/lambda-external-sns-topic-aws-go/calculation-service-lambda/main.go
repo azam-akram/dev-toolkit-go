@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"dev-toolkit-go/aws-go/lambda-external-sns-topic-aws-go/calculation-service-lambda/model"
+	"dev-toolkit-go/aws-go/lambda-external-sns-topic-aws-go/calculation-service-lambda/utils"
 	"encoding/json"
 	"fmt"
-	"github/dev-toolkit-go/aws-go/lambda-external-sns-topic-aws-go/calculation-service-lambda/model"
-	"github/dev-toolkit-go/aws-go/lambda-external-sns-topic-aws-go/calculation-service-lambda/utils"
 
 	"time"
 

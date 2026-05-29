@@ -2,9 +2,9 @@ package utils
 
 import (
 	"context"
+	"dev-toolkit-go/aws-go/lambda-external-sns-topic-aws-go/calculation-requester-lambda/model"
 	"encoding/json"
 	"fmt"
-	"github/dev-toolkit-go/aws-go/lambda-external-sns-topic-aws-go/calculation-requester-lambda/model"
 
 	"os"
 	"time"

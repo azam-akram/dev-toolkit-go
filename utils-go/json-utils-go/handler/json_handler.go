@@ -1,9 +1,9 @@
 package handler
 
 import (
+	"dev-toolkit-go/utils-go/json-utils-go/logger"
 	"encoding/json"
 	"fmt"
-	"github/dev-toolkit-go/utils-go/json-utils-go/logger"
 )
 
 var handler Handler

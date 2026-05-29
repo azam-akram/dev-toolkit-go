@@ -2,9 +2,9 @@ package handler
 
 import (
 	"context"
+	"dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/internal/dynamo_db"
+	"dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/internal/model"
 	"encoding/json"
-	"github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/internal/dynamo_db"
-	"github/dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/internal/model"
 
 	"net/http"
 

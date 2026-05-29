@@ -2,8 +2,8 @@ package utils
 
 import (
 	"context"
+	"dev-toolkit-go/aws-go/lambda-sns-events-aws-go/model"
 	"encoding/json"
-	"github/dev-toolkit-go/aws-go/lambda-sns-events-aws-go/model"
 	"log"
 	"os"
 
