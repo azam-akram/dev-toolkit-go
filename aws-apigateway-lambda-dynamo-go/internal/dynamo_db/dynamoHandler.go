@@ -2,7 +2,7 @@ package dynamo_db
 
 import (
 	"context"
-	"dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/internal/model"
+	"dev-toolkit-go/aws-apigateway-lambda-dynamo-go/internal/model"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dev-toolkit-go/aws-go/aws-apigateway-lambda-dynamo-go/internal/handler"
+	"dev-toolkit-go/aws-apigateway-lambda-dynamo-go/internal/handler"
 
 	"github.com/aws/aws-lambda-go/lambda"
 )
