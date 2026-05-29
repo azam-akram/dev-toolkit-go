@@ -20,6 +20,7 @@
 
 # Go workspace file
 go.work
+go.work.sum
 #################
 
 #Coverage
@@ -44,3 +45,21 @@ helper-*
 
 # Binaries
 *main
+__debug_bin*
+
+# Profiling
+*.prof
+*.pprof
+coverage.html
+
+# Docker local overrides
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+*.pem
+*.key
+*.crt
