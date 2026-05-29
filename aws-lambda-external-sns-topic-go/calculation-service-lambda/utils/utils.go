@@ -1,0 +1,75 @@
+package utils
+
+import (
+	"context"
+	"dev-toolkit-go/aws-lambda-external-sns-topic-go/calculation-service-lambda/model"
+	"encoding/json"
+	"fmt"
+	"os"
+	"time"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/sns"
+	snstypes "github.com/aws/aws-sdk-go-v2/service/sns/types"
+)
+
+func getAWSRegion() string {
+	region := os.Getenv("AWS_REGION")
+	fmt.Println("AWS region: ", region)
+	return region
+}
+
+func getSNSTopicARN() string {
+	topicArn := os.Getenv("SNS_TOPIC_ARN")
+	fmt.Println("SNS Topic ARN: ", topicArn)
+	return topicArn
+}
+
+func PublishEvent(ctx context.Context, event model.Event) (msgId string, err error) {
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(getAWSRegion()))
+	if err != nil {
+		return "", err
+	}
+	snsClient := sns.NewFromConfig(cfg)
+
+	eventBytes, err := json.Marshal(event)
+	if err != nil {
+		return "", err
+	}
+
+	snsInput := &sns.PublishInput{
+		Message:  aws.String(string(eventBytes)),
+		TopicArn: aws.String(getSNSTopicARN()),
+		MessageAttributes: map[string]snstypes.MessageAttributeValue{
+			"name": {
+				DataType:    aws.String("String"),
+				StringValue: aws.String(event.Name),
+			},
+		},
+	}
+
+	snsMsg, err := snsClient.Publish(ctx, snsInput)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println("Published event: ", snsMsg)
+	return aws.ToString(snsMsg.MessageId), nil
+}
+
+func GetSumCompletedEvent(event *model.Event) error {
+	event.Name = "SumCompleted"
+	event.Source = "Calculation Service"
+	event.EventTime = time.Now().Format(time.RFC3339)
+
+	sum := 0
+	for _, num := range event.Payload.Numbers {
+		sum += num
+	}
+	event.Payload.Sum = sum
+
+	fmt.Println("Event to publish: ", event)
+
+	return nil
+}
