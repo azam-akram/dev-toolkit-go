@@ -1,6 +1,6 @@
-module github.com/dev-toolkit-go/aws-lambda-mysql-rds-go
+module dev-toolkit-go/aws-lambda-mysql-rds-go
 
-go 1.25.3
+go 1.25.5
 
 require (
 	github.com/aws/aws-lambda-go v1.50.0

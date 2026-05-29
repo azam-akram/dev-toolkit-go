@@ -1,4 +1,4 @@
-module github.com/dev-toolkit-go/aws-step-function-go
+module dev-toolkit-go/aws-step-function-go
 
 go 1.25.3
 
