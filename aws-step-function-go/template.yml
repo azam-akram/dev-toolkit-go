@@ -52,7 +52,7 @@ Resources:
         S3Bucket: !Ref pLambdaCodeBucket
         S3Key: !Ref pInputValidationCodeS3KeyPath
       Role: !GetAtt lfnLambdaRole.Arn
-      Timeout: '120'
+      Timeout: 120
 
   # Data Processing Lambda Function
   DataProcessingFunction:
@@ -69,7 +69,7 @@ Resources:
         S3Bucket: !Ref pLambdaCodeBucket
         S3Key: !Ref pDataProcessingCodeS3KeyPath
       Role: !GetAtt lfnLambdaRole.Arn
-      Timeout: '120'
+      Timeout: 120
 
   # Result Storage Lambda Function
   ResultStorageFunction:
@@ -86,7 +86,7 @@ Resources:
         S3Bucket: !Ref pLambdaCodeBucket
         S3Key: !Ref pResultStorageCodeS3KeyPath
       Role: !GetAtt lfnLambdaRole.Arn
-      Timeout: '120'
+      Timeout: 120
 
   # Step Functions Role
   StepFunctionsExecutionRole:

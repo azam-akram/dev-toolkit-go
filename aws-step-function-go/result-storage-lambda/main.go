@@ -12,7 +12,7 @@ type ProcessedData struct {
 }
 
 func HandleRequest(ctx context.Context, data ProcessedData) (string, error) {
-	// Store data in database
+	// Simulate storing in a database
 	fmt.Printf("Storing result: %s\n", data.ProcessedValue)
 
 	return "Data successfully stored!", nil
