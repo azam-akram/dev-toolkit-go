@@ -4,7 +4,7 @@
   "containerDefinitions": [
     {
       "name": "go-app-container",
-      "image": "<ACCOUNT-ID>.dkr.ecr.eu-west-2.amazonaws.com/scalable-containerized-service-aws-go:latest",
+      "image": "<aws-account-id>.dkr.ecr.<aws-region>.amazonaws.com/scalable-containerized-service-aws-go:latest",
       "portMappings": [
         {
           "containerPort": 8080,
@@ -23,7 +23,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/go-app-task",
-          "awslogs-region": "<REGION>",
+          "awslogs-region": "<aws-region>",
           "awslogs-stream-prefix": "ecs"
         }
       }
@@ -32,5 +32,5 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
-  "executionRoleArn": "arn:aws:iam::<ACCOUNT-ID>:role/ecsTaskExecutionRole"
+  "executionRoleArn": "arn:aws:iam::<aws-account-id>:role/ecsTaskExecutionRole"
 }

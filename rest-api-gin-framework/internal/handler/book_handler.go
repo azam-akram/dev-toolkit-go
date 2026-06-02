@@ -27,7 +27,7 @@ func (h *BookHandler) CreateBook(c *gin.Context) {
 	}
 
 	bookResponse := model.BookResponse{
-		ID:     99, // Mock ID
+		ID:     99,
 		Title:  book.Title,
 		Author: book.Author,
 		Rating: book.Rating,
@@ -88,7 +88,6 @@ func (h *BookHandler) UpdateBook(c *gin.Context) {
 }
 
 func (h *BookHandler) DeleteBook(c *gin.Context) {
-	// 1. Parse ID
 	idStr := c.Param("id")
 	_, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
@@ -104,8 +103,8 @@ func (h *BookHandler) DeleteBook(c *gin.Context) {
 
 func (h *BookHandler) ListBooks(c *gin.Context) {
 	books := []model.BookResponse{
-		{ID: 101, Title: "Favourite Book 1", Author: "Favourite Author 1 ", Rating: 5},
-		{ID: 102, Title: "Favourite Book 1", Author: "Favourite Author 2", Rating: 4},
+		{ID: 101, Title: "Clean Code", Author: "Robert C. Martin", Rating: 5},
+		{ID: 102, Title: "The Go Programming Language", Author: "Alan Donovan", Rating: 4},
 	}
 
 	c.JSON(http.StatusOK, books)
@@ -113,8 +112,8 @@ func (h *BookHandler) ListBooks(c *gin.Context) {
 
 func (h *BookHandler) GetTopRatedBooks(c *gin.Context) {
 	topRatedBooks := []model.BookResponse{
-		{ID: 201, Title: "Favourite Book 1", Author: "Favourite Author 1", Rating: 5},
-		{ID: 202, Title: "Favourite Book 2", Author: "Favourite Author 2", Rating: 4},
+		{ID: 201, Title: "Clean Code", Author: "Robert C. Martin", Rating: 5},
+		{ID: 202, Title: "The Pragmatic Programmer", Author: "Andrew Hunt", Rating: 4},
 	}
 
 	c.JSON(http.StatusOK, topRatedBooks)

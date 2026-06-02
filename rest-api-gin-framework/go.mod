@@ -1,4 +1,4 @@
-module github/dev-toolkit-go/rest-api-gin-framework
+module dev-toolkit-go/rest-api-gin-framework
 
 go 1.25.3
 

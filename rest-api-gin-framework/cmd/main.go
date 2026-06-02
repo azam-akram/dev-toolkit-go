@@ -24,7 +24,6 @@ func setupRouter() *gin.Engine {
 
 	v1 := router.Group("/v1")
 	{
-		// Bookstore API Endpoints (CRUD + custom)
 		v1.POST("/books", bookHandler.CreateBook)
 		v1.GET("/books/:id", bookHandler.GetBook)
 		v1.PUT("/books/:id", bookHandler.UpdateBook)
