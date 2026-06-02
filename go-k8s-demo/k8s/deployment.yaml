@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-k8s-demo
+  labels:
+    app: go-k8s-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: go-k8s-demo
+  template:
+    metadata:
+      labels:
+        app: go-k8s-demo
+    spec:
+      containers:
+        - name: go-k8s-demo
+          image: go-k8s-demo:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_VERSION
+              value: "v1"
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+            limits:
+              cpu: "200m"
+              memory: "64Mi"
