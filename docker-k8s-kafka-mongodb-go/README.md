@@ -5,12 +5,12 @@
 HTTP Sever is written in go.
 Build docker image of http server by,
 ```
-docker build . -t http-server-go
+docker build -t http-server-go:v1 .
 ```
 
 and run:
 ```
-docker run --rm -p 8080:8080 --name http-server-go-container http-server-go
+docker run --rm -p 8080:8080 -e APP_VERSION=v1 --name http-server-go-container http-server-go
 ```
 
 Output:

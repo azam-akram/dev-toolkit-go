@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"dev-toolkit-go/docker-k8s-kafka-mongodb-go/internal/logger"
 	"dev-toolkit-go/docker-k8s-kafka-mongodb-go/internal/model"
 	"dev-toolkit-go/docker-k8s-kafka-mongodb-go/internal/utils"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -12,7 +12,7 @@ import (
 )
 
 func HandleRequest(w http.ResponseWriter, req *http.Request) {
-	fmt.Printf("Request %v", req)
+	logger.Get().Info("Http request received")
 
 	switch req.URL.Path {
 	case "/healthcheck":
@@ -20,17 +20,29 @@ func HandleRequest(w http.ResponseWriter, req *http.Request) {
 		case http.MethodGet:
 			healthcheck(w)
 		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			logger.Get().Info("End point /healthcheck doesn't support this method", "path", req.URL.Path, "method", http.StatusMethodNotAllowed)
+			errResponse := map[string]string{
+				"error": "HTTP method not supported",
+			}
+			writeFailedResponse(w, errResponse, http.StatusMethodNotAllowed)
 		}
 	case "/students":
 		switch req.Method {
 		case http.MethodPost:
 			createStudent(w, req)
 		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			logger.Get().Info("End point /students doesn't support this method", "path", req.URL.Path, "method", http.StatusMethodNotAllowed)
+			errResponse := map[string]string{
+				"error": "HTTP method not supported",
+			}
+			writeFailedResponse(w, errResponse, http.StatusMethodNotAllowed)
 		}
 	default:
-		fmt.Printf("Endpoint not supported: %s", req.URL.Path)
+		logger.Get().Info("Endpoint not supported", "path", req.URL.Path)
+		errResponse := map[string]string{
+			"error": "HTTP method not supported",
+		}
+		writeFailedResponse(w, errResponse, http.StatusNotFound)
 	}
 }
 
@@ -39,39 +51,65 @@ func healthcheck(w http.ResponseWriter) {
 		"Status": "OK",
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	err := json.NewEncoder(w).Encode(resp)
-	if err != nil {
-		fmt.Printf("Failed to encode healthcheck response: %v\n", err)
-	}
+	writeSuccessResponse(w, http.StatusOK, resp)
 }
 
 func createStudent(w http.ResponseWriter, req *http.Request) {
+	version := os.Getenv("APP_VERSION")
+	if len(version) == 0 {
+		version = "v1"
+	}
+
 	reqBodyStr, err := io.ReadAll(req.Body)
 	if err != nil {
-		fmt.Printf("error reading HTTP request body: %v\n", err)
+		logger.Get().Error("Error reading HTTP request body", "error", err)
+		errResponse := map[string]string{
+			"error": "Error reading HTTP request body",
+		}
+		writeFailedResponse(w, errResponse, http.StatusBadRequest)
 	}
 
 	var sReq model.StudentRequest
 	if utils.StringToStruct(string(reqBodyStr), &sReq); err != nil {
-		fmt.Printf("error unmarshalling request body: %v\n", err)
+		logger.Get().Error("Error unmarshalling request body", "error", err)
 	}
 
-	fmt.Printf("Student Request: %v\n", sReq)
+	logger.Get().Info("Unmarshalled Student Object", "sReq", sReq)
 
 	var sResp model.StudentResponse
 	sResp.Created = time.Now()
 	sResp.CreatedBy = sReq.CreatedBy
 	sResp.HostName, _ = os.Hostname()
 	sResp.Students = sReq.Students
-	sResp.Version = "v1" // TODO
+	sResp.Version = version
 
-	fmt.Printf("Student Response: %v\n", sResp)
+	writeSuccessResponse(w, http.StatusCreated, sResp)
+}
+
+func writeSuccessResponse(w http.ResponseWriter, code int, resp any) {
+	logger.Get().Info("Returning response", "resp", resp)
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(code)
 
-	json.NewEncoder(w).Encode(sResp)
+	err := json.NewEncoder(w).Encode(resp)
+	if err != nil {
+		logger.Get().Error("Failed to encode success response", "error", err)
+		errResponse := map[string]string{
+			"error": "Failed to encode success response",
+		}
+		writeFailedResponse(w, errResponse, http.StatusBadRequest)
+	}
+}
+
+func writeFailedResponse(w http.ResponseWriter, resp any, code int) {
+	logger.Get().Info("Returning failed response", "resp", resp)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+
+	err := json.NewEncoder(w).Encode(resp)
+	if err != nil {
+		logger.Get().Error("Failed to encode success response", "error", err)
+	}
 }

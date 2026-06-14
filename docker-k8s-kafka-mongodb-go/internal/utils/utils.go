@@ -1,14 +1,14 @@
 package utils
 
 import (
+	"dev-toolkit-go/docker-k8s-kafka-mongodb-go/internal/logger"
 	"encoding/json"
-	"fmt"
 )
 
 func StringToStruct(s string, o any) error {
 	err := json.Unmarshal([]byte(s), &o)
 	if err != nil {
-		fmt.Println(err)
+		logger.Get().Error("Failed to convert string into struct", "error", err)
 	}
 
 	return err
