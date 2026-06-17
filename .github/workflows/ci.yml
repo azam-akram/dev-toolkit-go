@@ -14,7 +14,8 @@ jobs:
         project:
           - aws-apigateway-lambda-dynamo-go
           - aws-lambda-cron-go
-          - aws-lambda-external-sns-topic-go
+          - aws-lambda-external-sns-topic-go/calculation-requester-lambda
+          - aws-lambda-external-sns-topic-go/calculation-service-lambda
           - aws-lambda-mysql-rds-go
           - aws-lambda-sns-events-go
           - aws-scalable-containerized-service-go
