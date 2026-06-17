@@ -1,4 +1,4 @@
-module dev-toolkit-go/aws-go/lambda-sns-events-aws-go
+module dev-toolkit-go/aws-lambda-sns-events-go
 
 go 1.25.5
 
