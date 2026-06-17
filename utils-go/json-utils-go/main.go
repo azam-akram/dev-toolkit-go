@@ -28,11 +28,11 @@ var empStr = `{
 }`
 
 func main() {
+	logLevel := "INFO"
+	log := logger.Init(logLevel)
+
 	jsonHelper := jsonhelper.NewJsonHelper()
 	jsonHelper.StringToMap(empStr)
 
-	logLevel := "INFO"
-	log := logger.Init(logLevel)
 	log.Info(empStr)
-
 }

@@ -1,4 +1,4 @@
-module github/dev-toolkit-go/utils-go/json-utils-go
+module dev-toolkit-go/utils-go/json-utils-go
 
 go 1.25.3
 
