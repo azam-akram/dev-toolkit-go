@@ -12,6 +12,16 @@ jobs:
     strategy:
       matrix:
         project:
+          - aws-apigateway-lambda-dynamo-go
+          - aws-lambda-cron-go
+          - aws-lambda-external-sns-topic-go
+          - aws-lambda-mysql-rds-go
+          - aws-lambda-sns-events-go
+          - aws-scalable-containerized-service-go
+          - aws-step-function-go
+          - go-k8s-demo
+          - kafka-docker-go
+          - rest-api-gin-framework
           - utils-go/http-utils-go
           - utils-go/json-utils-go
     steps:
