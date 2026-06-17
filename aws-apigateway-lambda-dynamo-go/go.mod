@@ -1,4 +1,4 @@
-module github/dev-toolkit-go/aws-apigateway-lambda-dynamo-go
+module dev-toolkit-go/aws-apigateway-lambda-dynamo-go
 
 go 1.25.3
 
