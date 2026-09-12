@@ -10,10 +10,10 @@ import (
 )
 
 func main() {
-	broker := "localhost:9092"
-	topic := "demo-kafka-topic"
-	groupID := "demo-kafka-consumer"
-	port := "5555"
+	broker := getEnv("KAFKA_BROKER", "localhost:9092")
+	topic := getEnv("KAFKA_TOPIC", "demo-kafka-topic")
+	groupID := getEnv("KAFKA_GROUP_ID", "demo-kafka-consumer")
+	port := getEnv("PORT", "5555")
 
 	consumer := NewKafkaConsumer(broker, topic, groupID)
 	defer consumer.Close()
@@ -35,4 +35,11 @@ func main() {
 	log.Printf("Consumer started topic=%s group=%s", topic, groupID)
 	consumer.Run(ctx)
 	log.Println("Consumer stopped")
+}
+
+func getEnv(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
 }
