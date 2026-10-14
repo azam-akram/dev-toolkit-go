@@ -1,7 +1,7 @@
 package main
 
 import (
-	tokenbucket "brain-dump/design-patterns/rate-limiter-token-bucket/limiter"
+	tokenbucket "dev-toolkit-go/design-patterns/rate-limiter-token-bucket/limiter"
 	"log"
 	"net/http"
 )
